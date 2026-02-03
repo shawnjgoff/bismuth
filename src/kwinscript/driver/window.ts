@@ -115,7 +115,7 @@ export class DriverWindowImpl implements DriverWindow {
       resourceClass === "ksmserver" ||
       resourceClass === "org.kde.plasmashell" ||
       resourceClass === "krunner" ||
-      resourceClass === "kded5" ||
+      resourceClass === "kded6" ||
       this.config.ignoreClass.indexOf(resourceClass) >= 0 ||
       this.config.ignoreClass.indexOf(resourceName) >= 0 ||
       matchWords(this.client.caption, this.config.ignoreTitle) >= 0 ||
