@@ -11,7 +11,7 @@ import org.kde.kirigami as Kirigami
 Kirigami.Page {
     id: root
 
-    title: "Window Layouts"
+    title: i18n("Window Layouts")
 
     ListModel {
         id: layoutsModel
