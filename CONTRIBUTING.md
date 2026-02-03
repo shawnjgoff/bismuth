@@ -40,7 +40,7 @@ make build
 ```
 
 This will compile the script via TypeScript and produce the JS output adapted to
-[QML JavaScript Environment](https://doc.qt.io/qt-5/qtqml-javascript-hostenvironment.html).
+[QML JavaScript Environment](https://doc.qt.io/qt-6/qtqml-javascript-hostenvironment.html).
 
 ## 📦 Installation
 
@@ -105,4 +105,4 @@ You'll also need to know something about KWin scripting and Qt JavaScript
 Environment. For KWin scripting there is [a tutorial on the KDE developer
 portal](https://develop.kde.org/docs/plasma/kwin/). And for Qt JavaScript
 things you can check out [the official
-documentation](https://doc.qt.io/qt-5/qtqml-javascript-hostenvironment.html).
+documentation](https://doc.qt.io/qt-6/qtqml-javascript-hostenvironment.html).

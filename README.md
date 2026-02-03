@@ -54,9 +54,11 @@ https://user-images.githubusercontent.com/14205339/148564378-1def9350-a871-4f75-
 
 ### Requirements
 
-- A Linux distribution with KDE Plasma version 5.20 or higher
-- Qt version 5.15 or higher
-- KDE Frameworks version 5.78 or higher
+- A Linux distribution with KDE Plasma 6.x
+- Qt version 6.x
+- KDE Frameworks 6.x
+
+> **Note:** For KDE Plasma 5.x, use the [v3.1.4 release](https://github.com/Bismuth-Forge/bismuth/releases/tag/v3.1.4).
 
 You can check if your system matches these requirements by going to System
 Settings > About this System.
@@ -92,7 +94,7 @@ contact the package maintainer first.
   ```bash
   sudo dnf install bismuth
   ```
-  
+
 #### Solus
 
 - [Official Repo](https://dev.getsol.us/source/bismuth)
