@@ -61,7 +61,7 @@ add_custom_command(
           "${CMAKE_CURRENT_SOURCE_DIR}/ui/popup.qml"
   COMMENT "📑 Preparing UI and metadata files...")
 
-configure_file("metadata.desktop" "bismuth/metadata.desktop" @ONLY)
+configure_file("metadata.json" "bismuth/metadata.json" @ONLY)
 
 install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bismuth"
         DESTINATION "${KDE_INSTALL_DATAROOTDIR}/kwin/scripts")

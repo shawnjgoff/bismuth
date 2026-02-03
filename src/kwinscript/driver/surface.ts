@@ -41,8 +41,9 @@ export class DriverSurfaceImpl implements DriverSurface {
 
   constructor(
     public readonly screen: number,
+    public readonly output: KWin.Output,
     public readonly activity: string,
-    public readonly desktop: number,
+    public readonly desktop: KWin.VirtualDesktop,
     private activityInfo: Plasma.TaskManager.ActivityInfo,
     private config: Config,
     private kwinApi: KWin.Api
@@ -57,22 +58,27 @@ export class DriverSurfaceImpl implements DriverSurface {
     this.workingArea = Rect.fromQRect(
       this.kwinApi.workspace.clientArea(
         0, // This is PlacementArea
-        screen,
+        output,
         desktop
       )
     );
   }
 
   public next(): DriverSurface | null {
+    // Get the index of current desktop
+    const desktops = this.kwinApi.workspace.desktops;
+    const currentIndex = desktops.findIndex((d) => d.id === this.desktop.id);
+
     // This is the last virtual desktop
-    if (this.desktop === this.kwinApi.workspace.desktops) {
+    if (currentIndex >= desktops.length - 1) {
       return null;
     }
 
     return new DriverSurfaceImpl(
       this.screen,
+      this.output,
       this.activity,
-      this.desktop + 1,
+      desktops[currentIndex + 1],
       this.activityInfo,
       this.config,
       this.kwinApi
@@ -81,7 +87,7 @@ export class DriverSurfaceImpl implements DriverSurface {
 
   public toString(): string {
     const activityName = this.activityInfo.activityName(this.activity);
-    return `DriverSurface(${this.screen}, ${activityName}, ${this.desktop})`;
+    return `DriverSurface(${this.screen}, ${activityName}, ${this.desktop.name})`;
   }
 
   private generateId(): string {
@@ -90,7 +96,7 @@ export class DriverSurfaceImpl implements DriverSurface {
       path += `@${this.activity}`;
     }
     if (this.config.layoutPerDesktop) {
-      path += `"#${this.desktop}`;
+      path += `"#${this.desktop.id}`;
     }
     return path;
   }

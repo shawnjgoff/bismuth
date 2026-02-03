@@ -141,7 +141,12 @@ export class DriverWindowImpl implements DriverWindow {
   }
 
   public get screen(): number {
-    return this.client.screen;
+    // In Plasma 6, we need to find the screen index from the output
+    const screens = this.kwinApi.workspace.screens;
+    const outputIndex = screens.findIndex(
+      (s) => s.name === this.client.output.name
+    );
+    return outputIndex >= 0 ? outputIndex : 0;
   }
 
   public get minimized(): boolean {
@@ -171,13 +176,15 @@ export class DriverWindowImpl implements DriverWindow {
       activity = this.client.activities[0];
     }
 
+    // In Plasma 6, desktops is an array; empty means on all desktops
     const desktop =
-      this.client.desktop >= 0
-        ? this.client.desktop
+      this.client.desktops.length > 0
+        ? this.client.desktops[0]
         : this.kwinApi.workspace.currentDesktop;
 
     return new DriverSurfaceImpl(
-      this.client.screen,
+      this.screen,
+      this.client.output,
       activity,
       desktop,
       this.qml.activityInfo,
@@ -191,8 +198,11 @@ export class DriverWindowImpl implements DriverWindow {
 
     // TODO: setting activity?
     // TODO: setting screen = move to the screen
-    if (this.client.desktop !== surfImpl.desktop) {
-      this.client.desktop = surfImpl.desktop;
+    // In Plasma 6, we set desktops array instead of desktop number
+    const currentDesktopId =
+      this.client.desktops.length > 0 ? this.client.desktops[0].id : null;
+    if (currentDesktopId !== surfImpl.desktop.id) {
+      this.client.desktops = [surfImpl.desktop];
     }
   }
 
@@ -274,7 +284,7 @@ export class DriverWindowImpl implements DriverWindow {
         const area = Rect.fromQRect(
           this.kwinApi.workspace.clientArea(
             0, // This is placement area
-            this.client.screen,
+            this.client.output,
             this.kwinApi.workspace.currentDesktop
           )
         );
@@ -299,13 +309,16 @@ export class DriverWindowImpl implements DriverWindow {
 
   public visibleOn(surf: DriverSurface): boolean {
     const surfImpl = surf as DriverSurfaceImpl;
+    // In Plasma 6, desktops is an array; empty means on all desktops
+    const onThisDesktop =
+      this.client.desktops.length === 0 || // on all desktops
+      this.client.desktops.some((d) => d.id === surfImpl.desktop.id);
     return (
       !this.client.minimized &&
-      (this.client.desktop === surfImpl.desktop ||
-        this.client.desktop === -1) /* on all desktop */ &&
+      onThisDesktop &&
       (this.client.activities.length === 0 /* on all activities */ ||
         this.client.activities.indexOf(surfImpl.activity) !== -1) &&
-      this.client.screen === surfImpl.screen
+      this.screen === surfImpl.screen
     );
   }
 

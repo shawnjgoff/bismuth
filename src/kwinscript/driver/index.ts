@@ -63,8 +63,14 @@ export interface Driver {
 
 export class DriverImpl implements Driver {
   public get currentSurface(): DriverSurface {
+    // In Plasma 6, activeScreen returns Output object
+    const screens = this.kwinApi.workspace.screens;
+    const activeScreen = this.kwinApi.workspace.activeScreen;
+    const screenIndex = screens.findIndex((s) => s.name === activeScreen.name);
+
     return new DriverSurfaceImpl(
-      this.kwinApi.workspace.activeScreen,
+      screenIndex >= 0 ? screenIndex : 0,
+      activeScreen,
       this.kwinApi.workspace.currentActivity,
       this.kwinApi.workspace.currentDesktop,
       this.qml.activityInfo,
@@ -80,19 +86,21 @@ export class DriverImpl implements Driver {
     // TODO: focusing window on other screen?
     // TODO: find a way to change activity
 
-    if (this.kwinApi.workspace.currentDesktop !== kwinSurface.desktop) {
+    if (this.kwinApi.workspace.currentDesktop.id !== kwinSurface.desktop.id) {
       this.kwinApi.workspace.currentDesktop = kwinSurface.desktop;
     }
   }
 
   public get currentWindow(): EngineWindow | null {
-    const client = this.kwinApi.workspace.activeClient;
+    // In Plasma 6, activeClient is renamed to activeWindow
+    const client = this.kwinApi.workspace.activeWindow;
     return client ? this.windowMap.get(client) : null;
   }
 
   public set currentWindow(window: EngineWindow | null) {
     if (window !== null) {
-      this.kwinApi.workspace.activeClient = (
+      // In Plasma 6, activeClient is renamed to activeWindow
+      this.kwinApi.workspace.activeWindow = (
         window.window as DriverWindowImpl
       ).client;
     }
@@ -100,10 +108,12 @@ export class DriverImpl implements Driver {
 
   public get screens(): DriverSurface[] {
     const screensArr = [];
-    for (let screen = 0; screen < this.kwinApi.workspace.numScreens; screen++) {
+    const screens = this.kwinApi.workspace.screens;
+    for (let screenIndex = 0; screenIndex < screens.length; screenIndex++) {
       screensArr.push(
         new DriverSurfaceImpl(
-          screen,
+          screenIndex,
+          screens[screenIndex],
           this.kwinApi.workspace.currentActivity,
           this.kwinApi.workspace.currentDesktop,
           this.qml.activityInfo,
@@ -201,7 +211,7 @@ export class DriverImpl implements Driver {
     const onClientMinimized = (client: KWin.Client): void => {
       if (this.config.preventMinimize) {
         client.minimized = false;
-        this.kwinApi.workspace.activeClient = client;
+        this.kwinApi.workspace.activeWindow = client;
       } else {
         this.controller.onWindowChanged(
           this.windowMap.get(client),
@@ -224,15 +234,17 @@ export class DriverImpl implements Driver {
       this.controller.onCurrentSurfaceChanged()
     );
 
-    this.connect(this.kwinApi.workspace.clientAdded, onClientAdded);
-    this.connect(this.kwinApi.workspace.clientRemoved, onClientRemoved);
-    this.connect(this.kwinApi.workspace.clientMaximizeSet, onClientMaximizeSet);
-    this.connect(this.kwinApi.workspace.clientMinimized, onClientMinimized);
-    this.connect(this.kwinApi.workspace.clientUnminimized, onClientUnminimized);
+    // In Plasma 6, signals are renamed from client* to window*
+    this.connect(this.kwinApi.workspace.windowAdded, onClientAdded);
+    this.connect(this.kwinApi.workspace.windowRemoved, onClientRemoved);
+    this.connect(this.kwinApi.workspace.windowMaximizeSet, onClientMaximizeSet);
+    this.connect(this.kwinApi.workspace.windowMinimized, onClientMinimized);
+    this.connect(this.kwinApi.workspace.windowUnminimized, onClientUnminimized);
   }
 
   public manageWindows(): void {
-    const clients = this.kwinApi.workspace.clientList();
+    // In Plasma 6, clientList() is renamed to windowList()
+    const clients = this.kwinApi.workspace.windowList();
     // TODO: provide interface for using the "for of" cycle
     for (let i = 0; i < clients.length; i++) {
       this.manageWindow(clients[i]);
@@ -364,7 +376,8 @@ export class DriverImpl implements Driver {
       }
     });
 
-    this.connect(client.screenChanged, () => {
+    // In Plasma 6, screenChanged is renamed to outputChanged
+    this.connect(client.outputChanged, () => {
       this.controller.onWindowScreenChanged(window);
     });
 
@@ -375,8 +388,9 @@ export class DriverImpl implements Driver {
       )
     );
 
-    this.connect(client.desktopChanged, () =>
-      this.controller.onWindowChanged(window, `desktop=${client.desktop}`)
+    // In Plasma 6, desktopChanged is renamed to desktopsChanged
+    this.connect(client.desktopsChanged, () =>
+      this.controller.onWindowChanged(window, `desktops changed`)
     );
 
     this.connect(client.shadeChanged, () => {

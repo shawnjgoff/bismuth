@@ -21,8 +21,8 @@ option(
   \"npx\" prefix before commands."
   ON)
 
-set(QT_MIN_VERSION "5.15.0")
-set(KF5_MIN_VERSION "5.78.0")
+set(QT_MIN_VERSION "6.6.0")
+set(KF6_MIN_VERSION "6.0.0")
 
 # HACK: Use git to get the recent version We could explicitly set the version
 # via project declaration But this would conflict with package.json and would
@@ -40,7 +40,7 @@ string(REPLACE "v" "" CMAKE_PROJECT_VERSION "${CMAKE_PROJECT_VERSION}")
 # PACKAGE_JSON) string(JSON CMAKE_PROJECT_VERSION GET ${PACKAGE_JSON} version)
 # unset(PACKAGE_JSON)
 
-find_package(ECM ${KF5_MIN_VERSION} REQUIRED NO_MODULE)
+find_package(ECM ${KF6_MIN_VERSION} REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/")
 
 include(KDEInstallDirs)
@@ -49,24 +49,18 @@ include(KDEClangFormat)
 include(ECMInstallIcons)
 include(ECMQtDeclareLoggingCategory)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS DBus Quick Svg
+find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS DBus Quick Svg
                                                               Test)
 
 find_package(
-  KF5 ${KF5_MIN_VERSION} REQUIRED
-  COMPONENTS Config
-             ConfigWidgets
-             CoreAddons
-             Declarative
-             GlobalAccel
-             KCMUtils
-             I18n)
+  KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS Config ConfigWidgets CoreAddons
+                                             GlobalAccel KCMUtils I18n)
 
-find_package(KDecoration2 REQUIRED)
+find_package(KDecoration3 REQUIRED)
 
 include_directories("${PROJECT_SOURCE_DIR}/external")
 

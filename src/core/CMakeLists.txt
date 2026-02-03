@@ -28,13 +28,13 @@ target_sources(bismuth_core PRIVATE qml-plugin.cpp ts-proxy.cpp controller.cpp
 
 target_link_libraries(
   bismuth_core
-  PRIVATE Qt5::Core
-          Qt5::Quick
-          Qt5::Qml
-          KF5::ConfigCore
-          KF5::ConfigGui
-          KF5::GlobalAccel
-          KF5::I18n)
+  PRIVATE Qt6::Core
+          Qt6::Quick
+          Qt6::Qml
+          KF6::ConfigCore
+          KF6::ConfigGui
+          KF6::GlobalAccel
+          KF6::I18n)
 
 kconfig_add_kcfg_files(bismuth_core GENERATE_MOC "config.kcfgc")
 

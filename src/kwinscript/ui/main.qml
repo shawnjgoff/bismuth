@@ -3,10 +3,10 @@
 // SPDX-License-Identifier: MIT
 
 import "../code/index.mjs" as Bismuth
-import QtQuick 2.0
-import org.kde.bismuth.core 1.0 as BiCore
-import org.kde.kwin 2.0
-import org.kde.taskmanager 0.1 as TaskManager
+import QtQuick
+import org.kde.bismuth.core as BiCore
+import org.kde.kwin
+import org.kde.taskmanager as TaskManager
 
 Item {
     id: scriptRoot

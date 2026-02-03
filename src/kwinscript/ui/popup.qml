@@ -2,11 +2,12 @@
 // SPDX-FileCopyrightText: 2021 Mikhail Zolotukhin <mail@gikari.com>
 // SPDX-License-Identifier: MIT
 
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import org.kde.kwin 2.0
-import org.kde.plasma.components 3.0 as PC3
-import org.kde.plasma.core 2.0 as PlasmaCore
+import QtQuick
+import QtQuick.Layouts
+import org.kde.kwin
+import org.kde.plasma.components as PC3
+import org.kde.plasma.core as PlasmaCore
+import org.kde.kirigami as Kirigami
 
 PlasmaCore.Dialog {
     id: popupDialog
@@ -29,31 +30,33 @@ PlasmaCore.Dialog {
         hideTimer.start();
     }
 
+    // Dialog type for OSD notifications
     type: PlasmaCore.Dialog.OnScreenDisplay
+    // Window flags: popup that stays on top (uses 'flags' in Plasma 6, not 'windowFlags')
     flags: Qt.Popup | Qt.WindowStaysOnTopHint
+    // Floating location for free positioning
     location: PlasmaCore.Types.Floating
+    // Don't accept input - click through
     outputOnly: true
+
     // Spawn popup a little bit lower than the center of the screen for consistency
     x: (screenGeometry.x + screenGeometry.width / 2) - width / 2
     y: (screenGeometry.y + screenGeometry.height * 2 / 3) - height / 2
     visible: false
-    Component.onCompleted: {
-        KWin.registerWindow(this);
-    }
 
     mainItem: RowLayout {
         id: main
 
         // Make popup size consistent with the other Plasma OSD (e.g. PulseAudio one)
-        Layout.minimumWidth: Math.max(messageText.implicitWidth, PlasmaCore.Units.gridUnit * 15)
-        Layout.minimumHeight: PlasmaCore.Units.gridUnit * 1.35
+        Layout.minimumWidth: Math.max(messageText.implicitWidth, Kirigami.Units.gridUnit * 15)
+        Layout.minimumHeight: Kirigami.Units.gridUnit * 1.35
 
-        PlasmaCore.IconItem {
+        Kirigami.Icon {
             id: messageIcon
 
-            Layout.leftMargin: PlasmaCore.Units.smallSpacing
-            Layout.preferredWidth: PlasmaCore.Units.iconSizes.medium
-            Layout.preferredHeight: PlasmaCore.Units.iconSizes.medium
+            Layout.leftMargin: Kirigami.Units.smallSpacing
+            Layout.preferredWidth: Kirigami.Units.iconSizes.medium
+            Layout.preferredHeight: Kirigami.Units.iconSizes.medium
             Layout.alignment: Qt.AlignVCenter
         }
 
@@ -63,7 +66,7 @@ PlasmaCore.Dialog {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
             // This font size matches the one from Pulse Audio OSD for consistency
-            font.pointSize: PlasmaCore.Theme.defaultFont.pointSize * 1.2
+            font.pointSize: Kirigami.Theme.defaultFont.pointSize * 1.2
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -71,10 +74,10 @@ PlasmaCore.Dialog {
             id: messageHint
 
             Layout.preferredWidth: widestHintSize.width
-            Layout.rightMargin: PlasmaCore.Units.smallSpacing * 2
+            Layout.rightMargin: Kirigami.Units.smallSpacing * 2
             Layout.alignment: Qt.AlignHCenter
             // This font size matches the one from Pulse Audio OSD for consistency
-            font.pointSize: PlasmaCore.Theme.defaultFont.pointSize * 1.2
+            font.pointSize: Kirigami.Theme.defaultFont.pointSize * 1.2
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -87,7 +90,7 @@ PlasmaCore.Dialog {
             font: messageHint.font
         }
 
-        // Hides the popup window when triggered
+        // Hides the popup when triggered
         Timer {
             id: hideTimer
 

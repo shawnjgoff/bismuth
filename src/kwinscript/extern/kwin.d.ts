@@ -3,12 +3,28 @@
 //
 // SPDX-License-Identifier: MIT
 
+// KWin 6.0 Scripting API Types for Plasma 6
 // API Reference: https://develop.kde.org/docs/plasma/kwin/api/
-// See also the KWin source code for the properties.
 
-// TODO: Register the rest of the API and document it according to KWin documentation.
-// Maybe it is even possible to generate this API. If so, this could be upstreamed.
 declare namespace KWin {
+  /**
+   * Represents a KWin Output (screen) in Plasma 6.
+   * Replaces the numeric screen index from KWin 5.
+   */
+  interface Output {
+    readonly name: string;
+    readonly geometry: QRectF;
+  }
+
+  /**
+   * Represents a KWin VirtualDesktop in Plasma 6.
+   */
+  interface VirtualDesktop {
+    readonly id: string;
+    readonly name: string;
+    readonly x11DesktopNumber: number;
+  }
+
   /**
    * Wrapper for all available KWin API from various places.
    */
@@ -18,14 +34,17 @@ declare namespace KWin {
     KWin: KWin.KWin;
   }
 
+  /**
+   * Global KWin object providing configuration and shortcut registration.
+   */
   interface KWin {
     /**
-     * Represents KWin::Script::readConfig
+     * Read a configuration value from the script's config.
      */
     readConfig(key: string, defaultValue?: any): any;
 
     /**
-     * Represents KWin::Script::registerShortcut
+     * Register a global shortcut for the script.
      */
     registerShortcut(
       title: string,
@@ -35,157 +54,81 @@ declare namespace KWin {
     ): boolean;
 
     /**
-     * Enum value of ClientAreaOption enum in KWin::JSEngineGlobalMethodsWrapper
+     * ClientAreaOption enum values for clientArea() calls.
      */
     PlacementArea: number;
+    FullScreenArea: number;
   }
 
+  /**
+   * The main workspace wrapper providing access to windows, screens, and desktops.
+   */
   interface WorkspaceWrapper {
-    /* read-only */
-    readonly activeScreen: number;
+    /* read-only properties */
+    readonly activeScreen: Output;
     readonly currentActivity: string;
-    readonly numScreens: number;
+    readonly screens: Output[];
+    readonly desktops: VirtualDesktop[];
 
-    /* read-write */
-    activeClient: KWin.Client;
-    currentDesktop: number;
-    desktops: number;
+    /* read-write properties */
+    activeWindow: KWin.Window;
+    currentDesktop: VirtualDesktop;
 
-    /* signals */
-    activitiesChanged: QSignal;
-    activityAdded: QSignal;
-    activityRemoved: QSignal;
-    clientAdded: QSignal;
-    clientMaximizeSet: QSignal;
-    clientMinimized: QSignal;
-    clientRemoved: QSignal;
-    clientUnminimized: QSignal;
+    /* signals - only those actually used by Bismuth */
+    windowAdded: QSignal;
+    windowRemoved: QSignal;
+    windowMaximizeSet: QSignal;
+    windowMinimized: QSignal;
+    windowUnminimized: QSignal;
     currentActivityChanged: QSignal;
     currentDesktopChanged: QSignal;
-    numberDesktopsChanged: QSignal;
-    numberScreensChanged: QSignal;
-    screenResized: QSignal;
 
-    /* functions */
-    clientList(): Client[];
-    clientArea(option: number, screen: number, desktop: number): QRectF;
+    /* methods */
+    windowList(): Window[];
+    clientArea(option: number, output: Output, desktop: VirtualDesktop): QRectF;
   }
 
+  /**
+   * KWin options/configuration interface.
+   */
   interface Options {
-    /* signal */
     configChanged: QSignal;
   }
 
   /**
-   * See KWin docs for the explanation what Toplevel is. Basically it is a window. Represents KWin::Toplevel
+   * Represents a KWin Window (formerly called Client in KWin 5).
+   * This is the main window interface in Plasma 6.
    */
-  interface Toplevel {
-    /* read-only */
+  interface Window {
+    /* read-only properties */
 
     /**
-     * On which activities the toplevel is present
+     * The output (screen) the window is on.
      */
-    readonly activities: string[] /* Not exactly `Array` */;
+    readonly output: Output;
 
     /**
-     * Whether the window is a dialog window.
-     */
-    readonly dialog: boolean;
-
-    /**
-     * TODO: ???
-     */
-    readonly resourceClass: QByteArray;
-
-    /**
-     * TODO: ???
-     */
-    readonly resourceName: QByteArray;
-
-    /**
-     * On which screen toplevel is
-     */
-    readonly screen: number;
-
-    /**
-     * Whether the window is a splashscreen.
-     */
-    readonly splash: boolean;
-
-    /**
-     * Whether the window is a utility window, such as a tool window.
-     */
-    readonly utility: boolean;
-
-    /**
-     * Window id in KWin
-     */
-    readonly windowId: number;
-
-    /**
-     * Window role property
-     */
-    readonly windowRole: QByteArray;
-
-    /**
-     * Client position
-     */
-    readonly clientPos: QPoint;
-
-    /**
-     * Client size
-     */
-    readonly clientSize: QSize;
-
-    /**
-     * TODO: I could not find anything about signal in the KWin source.
-     * Probably it does not exist here. It exists in KWin::Window though.
-     */
-    activitiesChanged: QSignal;
-
-    /**
-     * This signal is emitted when the Toplevel's frame geometry changes.
-     */
-    frameGeometryChanged: QSignal;
-
-    /**
-     * Emitted whenever the Toplevel's screen changes. This can happen either in consequence to
-     * a screen being removed/added or if the Toplevel's geometry changes.
-     */
-    screenChanged: QSignal;
-
-    /**
-     * Emitted when the Toplevel is shown?
-     */
-    windowShown: QSignal;
-  }
-
-  /**
-   * Client, also known as window. Represents KWin::Window.
-   */
-  interface Client extends Toplevel {
-    /**
-     * Whether the window is active.
+     * Whether the window is currently active (has focus).
      */
     readonly active: boolean;
 
     /**
-     * Window caption (The text in the titlebar).
+     * Window caption (the text in the titlebar).
      */
     readonly caption: string;
 
     /**
-     * Maximum allowed size for a window.
+     * Maximum allowed size for the window.
      */
     readonly maxSize: QSize;
 
     /**
-     * Minimum allowed size for a window.
+     * Minimum allowed size for the window.
      */
     readonly minSize: QSize;
 
     /**
-     * Whether the window is modal or not.
+     * Whether the window is modal.
      */
     readonly modal: boolean;
 
@@ -200,87 +143,148 @@ declare namespace KWin {
     readonly resize: boolean;
 
     /**
-     * Whether the window is resizable
+     * Whether the window is resizable.
      */
     readonly resizeable: boolean;
 
     /**
-     * Whether the window is any of special windows types (desktop, dock, splash, ...),
-     * i.e. window types that usually don't have a window frame and the user does not use window
-     * management (moving, raising,...) on them.
+     * Whether this is a special window type (desktop, dock, splash, etc.)
+     * that shouldn't be managed normally.
      */
     readonly specialWindow: boolean;
 
     /**
-     * Whether the windows is transient to an other windows, i.e. it is a sub window belonging to
-     * a main window
+     * Whether the window is transient (a sub-window of another window).
      */
     readonly transient: boolean;
 
     /**
-     * The desktop this window is on. If the window is on all desktops the property has value -1.
+     * Whether the window is a dialog.
      */
-    desktop: number;
+    readonly dialog: boolean;
 
     /**
-     * Whether the window is fullscreen
+     * Whether the window is a splash screen.
+     */
+    readonly splash: boolean;
+
+    /**
+     * Whether the window is a utility window (tool window).
+     */
+    readonly utility: boolean;
+
+    /**
+     * The window's resource class (application identifier).
+     */
+    readonly resourceClass: QByteArray;
+
+    /**
+     * The window's resource name.
+     */
+    readonly resourceName: QByteArray;
+
+    /**
+     * The window's role property.
+     */
+    readonly windowRole: QByteArray;
+
+    /**
+     * Unique window ID in KWin.
+     */
+    readonly windowId: number;
+
+    /**
+     * Activities the window is on. Empty array means on all activities.
+     */
+    readonly activities: string[];
+
+    /* read-write properties */
+
+    /**
+     * The desktops this window is on. Empty array means on all desktops.
+     */
+    desktops: VirtualDesktop[];
+
+    /**
+     * Whether the window is fullscreen.
      */
     fullScreen: boolean;
 
     /**
-     * This property holds the geometry of the Toplevel, excluding invisible
-     * portions, e.g. server-side and client-side drop-shadows, etc.
+     * The window's frame geometry (position and size excluding shadows).
      */
     frameGeometry: QRectF;
 
     /**
-     * Whether the window is set to be above all
+     * Whether the window should stay above other windows.
      */
     keepAbove: boolean;
 
     /**
-     * Whether the window is set to be below all
+     * Whether the window should stay below other windows.
      */
     keepBelow: boolean;
 
     /**
-     * Whether the window is minimized
+     * Whether the window is minimized.
      */
     minimized: boolean;
 
     /**
-     * Whether the window has borders (window decorations)
+     * Whether the window has no border/decoration.
      */
     noBorder: boolean;
 
     /**
-     * Whether the window is set to be on all desktops
+     * Whether the window is on all desktops.
      */
     onAllDesktops: boolean;
 
     /**
-     * Whether the Client is shaded.
+     * Whether the window is shaded (rolled up to just the titlebar).
      */
     shade: boolean;
 
-    /**
-     * Whether the window shading state changed
-     */
-    shadeChanged: QSignal;
+    /* signals - only those actually used by Bismuth */
 
     /**
-     * @see active
+     * Emitted when the window's active state changes.
      */
     activeChanged: QSignal;
 
     /**
-     * @see active
+     * Emitted when the window's frame geometry changes.
      */
-    desktopChanged: QSignal;
+    frameGeometryChanged: QSignal;
 
     /**
-     * @see move
+     * Emitted when the window starts or stops being moved/resized.
      */
     moveResizedChanged: QSignal;
+
+    /**
+     * Emitted when the window's output (screen) changes.
+     */
+    outputChanged: QSignal;
+
+    /**
+     * Emitted when the window's activities change.
+     */
+    activitiesChanged: QSignal;
+
+    /**
+     * Emitted when the window's desktops change.
+     */
+    desktopsChanged: QSignal;
+
+    /**
+     * Emitted when the window's shade state changes.
+     */
+    shadeChanged: QSignal;
   }
+
+  /**
+   * Backwards compatibility alias - Client is now Window in Plasma 6.
+   */
+  type Client = Window;
 }

@@ -1,0 +1,20 @@
+{
+  "KPlugin": {
+    "Id": "bismuth",
+    "Name": "Bismuth",
+    "Description": "Tiling extension that gets you down to bismuth",
+    "Icon": "bismuth",
+    "Authors": [
+      {
+        "Name": "Mikhail Zolotukhin",
+        "Email": "mail@genda.life"
+      }
+    ],
+    "License": "MIT",
+    "Website": "https://github.com/Bismuth-Forge/bismuth"
+  },
+  "KPackageStructure": "KWin/Script",
+  "X-Plasma-API": "declarativescript",
+  "X-Plasma-MainScript": "ui/main.qml",
+  "X-KWin-Exclude-Listing": true
+}

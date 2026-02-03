@@ -5,27 +5,26 @@
  */
 #pragma once
 
-#include <KQuickAddons/ManagedConfigModule>
+#include <KQuickManagedConfigModule>
 
 #include "bismuth_config.h"
 
-class BismuthSettings : public KQuickAddons::ManagedConfigModule
-{
-    Q_OBJECT
+class BismuthSettings : public KQuickManagedConfigModule {
+  Q_OBJECT
 
-    Q_PROPERTY(Bismuth::Config *config READ config CONSTANT)
+  Q_PROPERTY(Bismuth::Config *config READ config CONSTANT)
 
 public:
-    BismuthSettings(QObject *parent, const QVariantList &args);
-    virtual ~BismuthSettings() override = default;
+  BismuthSettings(QObject *parent, const KPluginMetaData &data);
+  virtual ~BismuthSettings() override = default;
 
-    Bismuth::Config *config() const;
+  Bismuth::Config *config() const;
 
 public Q_SLOTS:
-    void save() override;
+  void save() override;
 
 private:
-    void reloadKWinScript() const;
+  void reloadKWinScript() const;
 
-    Bismuth::Config *m_config;
+  Bismuth::Config *m_config;
 };

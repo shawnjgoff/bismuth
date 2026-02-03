@@ -7,12 +7,12 @@ target_sources(test_runner PRIVATE main.cpp)
 
 target_link_libraries(
   test_runner
-  PRIVATE Qt5::Core
-          Qt5::Quick
-          Qt5::Qml
-          Qt5::Test
-          KF5::ConfigCore
-          KF5::ConfigGui
+  PRIVATE Qt6::Core
+          Qt6::Quick
+          Qt6::Qml
+          Qt6::Test
+          KF6::ConfigCore
+          KF6::ConfigGui
           Bismuth::Core)
 
 doctest_discover_tests(test_runner)

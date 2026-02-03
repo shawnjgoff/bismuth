@@ -13,23 +13,26 @@ target_sources(kcm_bismuth PRIVATE bismuth.cpp ${kwin_dbus_srcs})
 
 target_link_libraries(
   kcm_bismuth
-  PRIVATE Qt5::Core
-          Qt5::DBus
-          KF5::CoreAddons
-          KF5::I18n
-          KF5::QuickAddons
-          KF5::ConfigCore
-          KF5::ConfigGui)
+  PRIVATE Qt6::Core
+          Qt6::DBus
+          KF6::CoreAddons
+          KF6::I18n
+          KF6::KCMUtilsQuick
+          KF6::ConfigCore
+          KF6::ConfigGui)
 
 kconfig_add_kcfg_files(kcm_bismuth GENERATE_MOC "bismuth_config.kcfgc")
-kcoreaddons_desktop_to_json(kcm_bismuth "package/metadata.desktop")
 
-install(TARGETS kcm_bismuth DESTINATION ${KDE_INSTALL_PLUGINDIR}/kcms)
-install(
-  FILES package/metadata.desktop
-  RENAME kcm_bismuth.desktop
-  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
+# Install the KCM plugin
+install(TARGETS kcm_bismuth
+        DESTINATION ${KDE_INSTALL_PLUGINDIR}/plasma/kcms/systemsettings)
 
-kpackage_install_package(package kcm_bismuth kcms)
+# Install KCM metadata and QML package
+install(FILES metadata.json
+        DESTINATION ${KDE_INSTALL_PLUGINDIR}/plasma/kcms/systemsettings)
+install(DIRECTORY package/contents
+        DESTINATION ${KDE_INSTALL_DATADIR}/kpackage/kcms/kcm_bismuth)
+install(FILES package/metadata.json
+        DESTINATION ${KDE_INSTALL_DATADIR}/kpackage/kcms/kcm_bismuth)
 
 add_subdirectory(icons)
