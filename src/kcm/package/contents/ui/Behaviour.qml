@@ -43,9 +43,7 @@ Kirigami.FormLayout {
 
         icon.name: "document-edit"
         text: i18n("Customize Layouts...")
-        onClicked: () => {
-            return kcm.push("./views/Layouts.qml");
-        }
+        onClicked: kcm.push("./views/Layouts.qml")
     }
 
     Item {
@@ -104,9 +102,7 @@ Kirigami.FormLayout {
 
         icon.name: "document-edit"
         text: i18n("Window Rules...")
-        onClicked: () => {
-            return kcm.push("./views/WindowRules.qml");
-        }
+        onClicked: kcm.push("./views/WindowRules.qml")
     }
 
     Item {
@@ -152,9 +148,7 @@ Kirigami.FormLayout {
 
         icon.name: "document-edit"
         text: i18n("Workspace Rules...")
-        onClicked: () => {
-            return kcm.push("./views/WorkspaceRules.qml");
-        }
+        onClicked: kcm.push("./views/WorkspaceRules.qml")
     }
 
 }
