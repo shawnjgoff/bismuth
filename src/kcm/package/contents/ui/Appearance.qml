@@ -38,7 +38,7 @@ Kirigami.FormLayout {
 
     Item {
         Kirigami.FormData.isSection: true
-        Kirigami.FormData.label: "Inner Gaps"
+        Kirigami.FormData.label: i18n("Inner Gaps")
     }
 
     BIC.PixelsConfigSpinBox {
