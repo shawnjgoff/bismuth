@@ -11,7 +11,7 @@ import org.kde.kirigami as Kirigami
 Kirigami.Page {
     id: root
 
-    title: "Workspace Rules"
+    title: i18n("Workspace Rules")
 
     Kirigami.FormLayout {
         anchors.fill: parent
@@ -22,8 +22,8 @@ Kirigami.Page {
         }
 
         BIC.ConfigTextField {
-            Kirigami.FormData.label: "On Activities:"
-            placeholderText: "Activities names (comma separated)"
+            Kirigami.FormData.label: i18n("On Activities:")
+            placeholderText: i18n("Activities names (comma separated)")
             settingName: "ignoreActivity"
             implicitWidth: Kirigami.Units.gridUnit * 20
         }
@@ -31,8 +31,8 @@ Kirigami.Page {
         BIC.ConfigTextField {
             // implicitWidth: Kirigami.Units.gridUnit * 20
 
-            Kirigami.FormData.label: "On Screens:"
-            placeholderText: "Screen numbers (comma separated)"
+            Kirigami.FormData.label: i18n("On Screens:")
+            placeholderText: i18n("Screen numbers (comma separated)")
             settingName: "ignoreScreen"
         }
 
