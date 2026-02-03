@@ -4,8 +4,8 @@
     "Description": "Window decoration, that integrates with Bismuth Tiling Window extension for the Plasma Desktop",
     "Name": "Bismuth"
   },
-  "KPackageStructure": "org.kde.kdecoration2",
-  "org.kde.kdecoration2": {
+  "KPackageStructure": "org.kde.kdecoration3",
+  "org.kde.kdecoration3": {
     "blur": false,
     "kcmodule": false,
     "recommendedBorderSize": "Normal"
