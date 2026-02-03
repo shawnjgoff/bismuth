@@ -72,7 +72,7 @@ Kirigami.Page {
 
                         enabled: model.editable && layoutCheckBox.checked
                         visible: model.editable
-                        iconName: "edit-rename"
+                        icon.name: "edit-rename"
                         tooltip: i18nc("@info:tooltip", "Edit Layout")
                         onTriggered: () => {
                             monocleSheet.open();
